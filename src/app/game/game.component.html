@@ -1,0 +1,10 @@
+<p>{{ word }}</p>
+<p>{{ guessedWord }}</p>
+
+<div>
+  <p>Previous guesses: {{ guesses.join(", ") }}</p>
+</div>
+<app-alphabet
+  [remainingLetters]="remainingLetters"
+  (letterSelected)="guessLetter($event)"
+></app-alphabet>

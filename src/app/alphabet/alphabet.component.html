@@ -1,0 +1,8 @@
+<div class="alphabet-container">
+  <button
+    *ngFor="let letter of remainingLetters"
+    (click)="selectLetter(letter)"
+  >
+    {{ letter }}
+  </button>
+</div>
