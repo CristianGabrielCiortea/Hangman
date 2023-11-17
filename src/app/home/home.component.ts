@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent {
+  iconImage = 'assets/images/icon/icon.png';
   constructor(private router: Router) {}
 
   play() {

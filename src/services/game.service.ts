@@ -4,56 +4,66 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class GameService {
-  private currentWord: string = '';
-  private incorrectGuesses: string[] = [];
+  private currentWord = '';
+  private correctGuessedLetters: string[] = [];
+  private incorrectGuessedLetters: string[] = [];
   private remainingLetters: string[] = [];
-  private static ALPHABET: string = 'abcdefghijklmnopqrstuvwxyz';
+  private static readonly ALPHABET = 'abcdefghijklmnopqrstuvwxyz';
+  private static readonly MAX_ATTEMPTS = 6;
 
   constructor() {}
 
   startNewGame(word: string) {
     this.currentWord = word;
-    this.incorrectGuesses = [];
     this.remainingLetters = Array.from(GameService.ALPHABET);
   }
 
-  getRemainingLetters() {
+  getRemainingLetters(): string[] {
     return this.remainingLetters;
   }
 
-  getIncorrectGuesses() {
-    return this.incorrectGuesses;
+  getWord(): string {
+    return this.currentWord;
   }
 
-  getWordState() {
-    const state = [];
-    for (const letter of this.currentWord) {
-      if (this.incorrectGuesses.includes(letter)) {
-        state.push(letter);
-      } else {
-        state.push('_');
-      }
-    }
-    return state.join(' ');
+  getCorrectGuessedLetters(): string[] {
+    return this.correctGuessedLetters;
+  }
+
+  getIncorrectGuessedLetters(): string[] {
+    return this.incorrectGuessedLetters;
+  }
+
+  getMaxAttempts(): number {
+    return GameService.MAX_ATTEMPTS;
+  }
+
+  getWordState(): string {
+    const usedLetters = this.correctGuessedLetters.concat(
+      this.incorrectGuessedLetters
+    );
+    return this.currentWord
+      .split('')
+      .map((char) => (usedLetters.includes(char) ? char : '_'))
+      .join('');
   }
 
   makeGuess(letter: string) {
     if (this.remainingLetters.includes(letter)) {
-      this.remainingLetters.splice(this.remainingLetters.indexOf(letter), 1);
-      if (!this.currentWord.includes(letter)) {
-        this.incorrectGuesses.push(letter);
+      this.remainingLetters = this.remainingLetters.filter((l) => l !== letter);
+      if (this.currentWord.includes(letter)) {
+        this.correctGuessedLetters.push(letter);
+      } else {
+        this.incorrectGuessedLetters.push(letter);
       }
     }
   }
 
-  isGameWon() {
-    if (this.getWordState() === this.currentWord) {
-      return true;
-    }
-    return false;
+  isGameWon(): boolean {
+    return this.getWordState() === this.currentWord;
   }
 
-  isGameLost() {
-    return this.incorrectGuesses.length >= 6;
+  isGameLost(): boolean {
+    return this.incorrectGuessedLetters.length >= GameService.MAX_ATTEMPTS;
   }
 }

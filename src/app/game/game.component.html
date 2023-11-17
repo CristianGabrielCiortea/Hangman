@@ -1,9 +1,19 @@
-<p>{{ word }}</p>
+<div class="hangman-container">
+  <img
+    [src]="hangmanState[remainingAttempts]"
+    alt="Hangman State"
+    class="hangman-image"
+  />
+</div>
+
+<p>{{ state }}</p>
 <p>{{ guessedWord }}</p>
 
 <div>
-  <p>Previous guesses: {{ guesses.join(", ") }}</p>
+  <p>Previous guesses: {{ wrongGuesses.join(", ") }}</p>
+  <p>Remaining attempts: {{ remainingAttempts }}</p>
 </div>
+
 <app-alphabet
   [remainingLetters]="remainingLetters"
   (letterSelected)="guessLetter($event)"

@@ -1,0 +1,43 @@
+.hangman-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.hangman-image {
+  width: 200px;
+  height: auto;
+  border: 1px solid #333;
+}
+
+p {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 30px;
+}
+
+div {
+  text-align: center;
+  margin-top: 10px;
+}
+
+app-alphabet {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+button {
+  margin: 5px;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #2196f3;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #1565c0;
+}
