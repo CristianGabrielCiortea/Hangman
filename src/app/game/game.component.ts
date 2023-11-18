@@ -110,7 +110,7 @@ export class GameComponent implements OnInit {
     this.remainingLetters = [];
     this.state = '';
     this.remainingAttempts = 0;
-    this.ngOnInit(); // Reload data on retry
+    this.ngOnInit();
   }
 
   playSound(soundFile: string) {
