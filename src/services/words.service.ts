@@ -27,12 +27,20 @@ export class WordsService {
     return this.http.get<Count>(`${this.baseUrl}/count`);
   }
 
-  getRandomWord(): Observable<Word> {
-    return this.getCount().pipe(
-      switchMap((response) => {
-        const count = response.number;
-        const randomNumber = Math.floor(Math.random() * count) + 1;
-        return this.http.get<Word>(`${this.baseUrl}/words/${randomNumber}`);
+  getWordsByDifficulty(difficulty: string): Observable<Word[]> {
+    return this.http.get<Word[]>(
+      `${this.baseUrl}/words?difficulty=${difficulty}`
+    );
+  }
+
+  getRandomWordByDifficulty(difficulty: string): Observable<Word> {
+    return this.getWordsByDifficulty(difficulty).pipe(
+      switchMap((words) => {
+        const count = words.length;
+        const randomNumber = Math.floor(Math.random() * count);
+        return this.http.get<Word>(
+          `${this.baseUrl}/words/${words[randomNumber].id}`
+        );
       })
     );
   }

@@ -38,32 +38,37 @@ export class GameService {
     return GameService.MAX_ATTEMPTS;
   }
 
-  getWordState(): string {
-    const usedLetters = this.correctGuessedLetters.concat(
-      this.incorrectGuessedLetters
-    );
-    return this.currentWord
-      .split('')
-      .map((char) => (usedLetters.includes(char) ? char : '_'))
-      .join('');
-  }
-
-  makeGuess(letter: string) {
+  makeGuess(letter: string) : boolean {
     if (this.remainingLetters.includes(letter)) {
       this.remainingLetters = this.remainingLetters.filter((l) => l !== letter);
       if (this.currentWord.includes(letter)) {
         this.correctGuessedLetters.push(letter);
+        return true;
       } else {
         this.incorrectGuessedLetters.push(letter);
+        return false;
       }
     }
+    return false;
   }
 
   isGameWon(): boolean {
-    return this.getWordState() === this.currentWord;
+    const wordLetters = new Set(this.currentWord.split(''));
+    const guessedLettersSet = new Set(this.correctGuessedLetters);
+
+    return Array.from(wordLetters).every((letter) =>
+      guessedLettersSet.has(letter)
+    );
   }
 
   isGameLost(): boolean {
     return this.incorrectGuessedLetters.length >= GameService.MAX_ATTEMPTS;
+  }
+
+  resetGame() {
+    this.correctGuessedLetters = [];
+    this.incorrectGuessedLetters = [];
+    this.remainingLetters = [];
+    this.currentWord = '';
   }
 }

@@ -1,15 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { GameService } from '../../services/game.service';
 import { WordsService } from '../../services/words.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.css'],
 })
-export class GameComponent {
+export class GameComponent implements OnInit {
+  isDifficultySelected = false;
+  selectedDifficulty = '';
   guessedWord = '';
   wrongGuesses: string[] = [];
+  correctGuesses: string[] = [];
   remainingLetters: string[] = [];
   state = '';
   remainingAttempts: number = 0;
@@ -25,17 +29,35 @@ export class GameComponent {
 
   constructor(
     private gameService: GameService,
-    private wordsService: WordsService
+    private wordsService: WordsService,
+    private router: Router
   ) {}
 
   ngOnInit() {
-    this.wordsService.getRandomWord().subscribe((word) => {
-      this.startNewGame(word.word);
-    });
+    if (this.isDifficultySelected) {
+      this.fetchRandomWord();
+      this.startNewGame(this.guessedWord);
+    }
+  }
+
+  onDifficultySelected(difficulty: string) {
+    this.isDifficultySelected = true;
+    this.selectedDifficulty = difficulty;
+    this.ngOnInit();
+  }
+
+  fetchRandomWord() {
+    this.wordsService
+      .getRandomWordByDifficulty(this.selectedDifficulty)
+      .subscribe((word) => {
+        this.startNewGame(word.word);
+        this.guessedWord = word.word;
+      });
   }
 
   guessLetter(letter: string) {
-    this.gameService.makeGuess(letter);
+    if (this.gameService.makeGuess(letter)) this.playCorrectSound();
+    else this.playWrongSound();
     this.updateGameStatus();
   }
 
@@ -43,18 +65,17 @@ export class GameComponent {
     this.gameService.startNewGame(word);
     this.remainingLetters = this.gameService.getRemainingLetters();
     this.remainingAttempts = this.gameService.getMaxAttempts();
-    this.guessedWord = this.gameService.getWordState();
   }
 
   private updateGameStatus() {
     this.wrongGuesses = this.gameService.getIncorrectGuessedLetters();
+    this.correctGuesses = this.gameService.getCorrectGuessedLetters();
     this.remainingLetters = this.gameService.getRemainingLetters();
 
     if (this.gameService.isGameWon() || this.gameService.isGameLost()) {
       this.handleGameEnd();
     } else {
       this.state = '';
-      this.guessedWord = this.gameService.getWordState();
       this.remainingAttempts =
         this.gameService.getMaxAttempts() - this.wrongGuesses.length;
     }
@@ -69,6 +90,41 @@ export class GameComponent {
 
     this.guessedWord = this.gameService.getWord();
     this.remainingLetters = [];
+    this.correctGuesses = this.guessedWord.split('');
     this.remainingAttempts = 0;
+  }
+
+  isGameDone() {
+    return this.gameService.isGameWon() || this.gameService.isGameLost();
+  }
+
+  goBack() {
+    this.gameService.resetGame();
+    this.router.navigate(['/']);
+  }
+
+  retryGame() {
+    this.gameService.resetGame();
+    this.wrongGuesses = [];
+    this.correctGuesses = [];
+    this.remainingLetters = [];
+    this.state = '';
+    this.remainingAttempts = 0;
+    this.ngOnInit(); // Reload data on retry
+  }
+
+  playSound(soundFile: string) {
+    let audio = new Audio();
+    audio.src = soundFile;
+    audio.load();
+    audio.play();
+  }
+
+  playCorrectSound() {
+    this.playSound('assets/sound/correct.mp3');
+  }
+
+  playWrongSound() {
+    this.playSound('assets/sound/wrong.mp3');
   }
 }

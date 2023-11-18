@@ -8,13 +8,17 @@ import { GameComponent } from './game/game.component';
 import { HttpClientModule } from '@angular/common/http';
 import { AlphabetComponent } from './alphabet/alphabet.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MaskingPipe } from './masking.pipe';
+import { DifficultyComponent } from './difficulty/difficulty.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     GameComponent,
-    AlphabetComponent
+    AlphabetComponent,
+    MaskingPipe,
+    DifficultyComponent
   ],
   imports: [
     BrowserModule,

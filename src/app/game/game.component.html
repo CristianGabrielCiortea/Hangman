@@ -1,20 +1,22 @@
-<div class="hangman-container">
-  <img
-    [src]="hangmanState[remainingAttempts]"
-    alt="Hangman State"
-    class="hangman-image"
-  />
-</div>
+<ng-container *ngIf="!isDifficultySelected">
+  <app-difficulty (difficultySelected)="onDifficultySelected($event)"></app-difficulty>
+</ng-container>
 
-<p>{{ state }}</p>
-<p>{{ guessedWord }}</p>
+<ng-container *ngIf="isDifficultySelected">
+  <button mat-raised-button (click)="goBack()">Back</button>
 
-<div>
-  <p>Previous guesses: {{ wrongGuesses.join(", ") }}</p>
-  <p>Remaining attempts: {{ remainingAttempts }}</p>
-</div>
+  <div class="hangman-container">
+    <img [src]="hangmanState[remainingAttempts]" alt="Hangman State" class="hangman-image" />
+  </div>
 
-<app-alphabet
-  [remainingLetters]="remainingLetters"
-  (letterSelected)="guessLetter($event)"
-></app-alphabet>
+  <p>{{ state }}</p>
+  <p>{{ guessedWord | masking : correctGuesses }}</p>
+
+  <div>
+    <p>Previous guesses: {{ wrongGuesses.join(", ") }}</p>
+    <p>Remaining attempts: {{ remainingAttempts }}</p>
+    <button mat-raised-button *ngIf="isGameDone()" (click)="retryGame()">Retry</button>
+  </div>
+
+  <app-alphabet [remainingLetters]="remainingLetters" (letterSelected)="guessLetter($event)"></app-alphabet>
+</ng-container>
