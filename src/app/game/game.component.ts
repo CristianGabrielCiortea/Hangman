@@ -91,7 +91,6 @@ export class GameComponent implements OnInit {
     this.guessedWord = this.gameService.getWord();
     this.remainingLetters = [];
     this.correctGuesses = this.guessedWord.split('');
-    this.remainingAttempts = 0;
   }
 
   isGameDone() {
